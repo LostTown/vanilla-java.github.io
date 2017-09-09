@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>A JDBC Gateway Microservice</title>
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="A JDBC Gateway Microservice">
+    <meta name="twitter:description" content="">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="A JDBC Gateway Microservice">
+    <meta property="og:description" content="">
+
+    <!-- <meta name="twitter:site" content="">
+
+<meta name="twitter:creator" content="">
+
+<meta name="google-site-verification" content="">
+
+<meta property="fb:admins" content="">
+ -->
+
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon">
+
+    <link href="//fonts.googleapis.com/" rel="dns-prefetch">
+    <link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1504936423326"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1504936423326"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1504936423326"/>
+
+
+
+
+    <script type="text/javascript">
+      var ga_ua = 'UA-XXXXX-X';
+      
+      var disqus_shortname = 'example';
+      
+      var enable_pjax = true;
+
+      // Pace Options
+      // ==============
+      window.paceOptions = {
+        catchupTime: 100,
+        minTime: 100,
+        elements: false,
+        restartOnRequestAfter: 500,
+        startOnPageLoad: false
+      }
+
+      // Ghostium Globals
+      // ==============
+      window.GHOSTIUM = {};
+      GHOSTIUM.haveGA = typeof ga_ua !== 'undefined' && ga_ua !== 'UA-XXXXX-X';
+      GHOSTIUM.haveDisqus = typeof disqus_shortname !== 'undefined' && disqus_shortname !== 'example';
+      GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
+    </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1504936423326"></script>
+
+    <link rel="canonical" href="https://vanilla-java.github.io/2016/04/12/A-JDBC-Gateway-Microservice.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Vanilla Java" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="A JDBC Gateway Microservice" />
+    <meta property="og:description" content="A deep dive into a low latency microservice We look at a microservice which can run in it&amp;#8217;s own JVM, can perform JDBC updates and queries via a persistent queue for in bound request and a queue for results. In previous posts I looked at the theory behind" />
+    <meta property="og:url" content="https://vanilla-java.github.io/2016/04/12/A-JDBC-Gateway-Microservice.html" />
+    <meta property="article:tag" content="Microservices" />
+    <meta property="article:tag" content=" JDBC" />
+    <meta property="article:tag" content=" Example" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="A JDBC Gateway Microservice" />
+    <meta name="twitter:description" content="A deep dive into a low latency microservice We look at a microservice which can run in it&amp;#8217;s own JVM, can perform JDBC updates and queries via a persistent queue for in bound request and a queue for results. In previous posts I looked at the theory behind" />
+    <meta name="twitter:url" content="https://vanilla-java.github.io/2016/04/12/A-JDBC-Gateway-Microservice.html" />
+    
+    <script type="application/ld+json">
+null
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+  </head>
+  <body class="post-template tag-Microservices tag-JDBC tag-Example">
+
+    <button data-action="open-drawer" id="drawer-button" class="drawer-button"><i class="fa fa-bars"></i></button>
+    <nav tabindex="-1" class="drawer">
+      <div class="drawer-container">
+        <!--.drawer-search(role="search")-->
+        <ul role="navigation" class="drawer-list">
+          
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" data-pjax>
+              <i class="fa fa-home"></i>Home
+            </a>
+          </li>
+          <!-- <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io" title="Vanilla Java" data-pjax>
+              <i class="fa fa-list-alt"></i>All posts
+            </a>
+          </li> -->
+          <li class="drawer-list-item">
+            <a href="https://vanilla-java.github.io/rss/">
+              <i class="fa fa-rss"></i>Subscribe to Feed
+            </a>
+          </li>
+          <li class="drawer-list-divider"></li>
+          <li class="drawer-list-item drawer-list-title">
+            Follow me
+          </li>
+          
+          
+          <li class="drawer-list-item">
+            <a href="https://twitter.com/PeterLawrey" title="Twitter" target="_blank">
+              <i class="fa fa-twitter"></i>Twitter
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://github.com/peter-lawrey" title="Github" target="_blank">
+              <i class="fa fa-github"></i>Github
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://plus.google.com/u/0/+PeterLawrey" title="Google+" target="_blank">
+              <i class="fa fa-google-plus"></i>Google+
+            </a>
+          </li>
+          <li class="drawer-list-item">
+            <a href="https://www.linkedin.com/in/peterlawrey" title="LinkedIn" target="_blank">
+              <i class="fa fa-linkedin"></i>LinkedIn
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="drawer-overlay"></div>
+    <main id="container" role="main" class="container">
+      <div class="surface">
+        <div class="surface-container">
+          <div data-pjax-container class="content">
+            
+<section class="wrapper wrapper-post">
+  <div class="wrapper-container">
+    <article itemscope itemtype="http://schema.org/BlogPosting" role="article" class="post post tag-Microservices tag-JDBC tag-Example">
+        <section class="post-container">
+          <header class="post-header">
+            <ul class="post-meta-list">
+              <li class="post-meta-item">
+                <time datetime="2016-04-12" itemprop="datePublished">
+                  a year ago
+                </time>
+              </li>
+                <li class="post-meta-item">
+                  <span class="tags"><i class="fa fa-tags"></i>
+                      <span>
+                      <a href="https://vanilla-java.github.io/tag/Microservices/">Microservices</a>, <a href="https://vanilla-java.github.io/tag/JDBC/"> JDBC</a>, <a href="https://vanilla-java.github.io/tag/Example/"> Example</a></span>
+                  </span>
+                </li>
+              <li class="post-meta-item">
+                <a href="#disqus_thread" data-disqus-identifier="">Comments</a>
+              </li>
+            </ul>
+            <h1 itemprop="name headline" class="post-title"><a href="https://vanilla-java.github.io/2016/04/12/A-JDBC-Gateway-Microservice.html" itemprop="url" data-pjax title="A JDBC Gateway Microservice">A JDBC Gateway Microservice</a></h1>
+            <!--h2 itemprop="about" class="post-subtitle"></h2-->
+          </header>
+          <aside class="post-side">
+            <div class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img src="https://avatars.githubusercontent.com/u/1070321?v&#x3D;3" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-name">
+                  Peter Lawrey
+                </a>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~12K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+              </div>
+            </div>
+          </aside>
+          <div itemprop="articleBody" class="post-body">
+            <div class="sect2">
+<h3 id="_a_deep_dive_into_a_low_latency_microservice">A deep dive into a low latency microservice</h3>
+<div class="paragraph">
+<p>We look at a microservice which can run in it&#8217;s own JVM, can perform JDBC updates and queries via a persistent queue for in bound request and a queue for results.</p>
+</div>
+<div class="paragraph">
+<p>In previous posts I looked at the theory behind there low latency micro-services so lets have a look at a micro-service which can do something useful.</p>
+</div>
+<div class="paragraph">
+<p>I would consider this a Gateway Service as it interacts with a system which is outside the microservice model.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_does_this_service_do">What does this service do?</h3>
+<div class="paragraph">
+<p>The service supports two messages <code>executeQuery</code> and <code>executeUpdate</code>.  These methods mirror the same methods for <code>PrepatedStatement</code> except the results are passed as messages</p>
+</div>
+<div class="listingblock">
+<div class="title">Two asynchronous messages in</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">public interface JDBCStatement {
+    void executeQuery(String query, Class&lt;? extends Marshallable&gt; resultType, Object... args);
+
+    void executeUpdate(String query, Object... args);
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Two asynchronous results, possibly with an Exception thrown</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">public interface JDBCResult {
+    void queryResult(Iterator&lt;Marshallable&gt; marshallableList, String query, Object... args);
+    void queryThrown(Throwable t, String query, Object... args);
+
+    void updateResult(long count, String update, Object... args);
+    void updateThrown(Throwable t, String update, Object... args);
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_component_wrapped_as_a_service">Component wrapped as a Service</h3>
+<div class="paragraph">
+<p>As in previous posts, we create a component which can be executed without a transport.  This can be unit tested stand alone, or with a series of components without the transport complicating testing and debugging.</p>
+</div>
+<div class="listingblock">
+<div class="title">Looking at the executorUpdate method</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">public class JDBCComponent implements JDBCStatement {
+    private final Connection connection;
+    private final JDBCResult result;
+
+    public JDBCComponent(ThrowingSupplier&lt;Connection, SQLException&gt; connectionSupplier, JDBCResult result) throws SQLException {
+        connection = connectionSupplier.get();
+        this.result = result;
+    }
+
+    @Override
+    public void executeUpdate(String query, Object... args) {
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            for (int i = 0; i &lt; args.length; i++)
+                ps.setObject(i + 1, args[i]);
+            int count = ps.executeUpdate();
+            // record the count.
+            result.updateResult(count, query, args);
+        } catch (Throwable t) {
+            result.updateThrown(t, query, args);
+        }
+    }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can see that every input message creates an output message with the results.  This will be useful later for restarting the service from where it got up to and monitoring it&#8217;s progress, as well as obtaining the results.</p>
+</div>
+<div class="listingblock">
+<div class="title">How to wrap this as a service</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">public class JDBCService implements Closeable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JDBCService.class);
+    private final ChronicleQueue in;
+    private final ChronicleQueue out;
+    private final ExecutorService service;
+    private final ThrowingSupplier&lt;Connection, SQLException&gt; connectionSupplier;
+    private volatile boolean closed = false;
+
+    public JDBCService(ChronicleQueue in, ChronicleQueue out, ThrowingSupplier&lt;Connection, SQLException&gt; connectionSupplier) throws SQLException {
+        this.in = in;
+        this.out = out;
+        this.connectionSupplier = connectionSupplier;
+
+        service = Executors.newSingleThreadExecutor(
+                new NamedThreadFactory(in.file().getName() + "-JDBCService", true)); <i class="conum" data-value="1"></i><b>(1)</b>
+        service.execute(this::runLoop); <i class="conum" data-value="2"></i><b>(2)</b>
+        service.shutdown(); // stop when the task exits.
+    }
+
+
+    void runLoop() {
+        try {
+            JDBCResult result = out.createAppender() <i class="conum" data-value="3"></i><b>(3)</b>
+                    .methodWriterBuilder(JDBCResult.class)
+                    .recordHistory(true)
+                    .get();
+            JDBCComponent js = new JDBCComponent(connectionSupplier, result);
+            MethodReader reader = in.createTailer().afterLastWritten(out).methodReader(js); <i class="conum" data-value="4"></i><b>(4)</b>
+            Pauser pauser = new LongPauser(50, 200, 1, 10, TimeUnit.MILLISECONDS);
+            while (!closed) {
+                if (reader.readOne()) <i class="conum" data-value="5"></i><b>(5)</b>
+                    pauser.reset();
+                else
+                    pauser.pause();
+            }
+        } catch (Throwable t) {
+            LOGGER.error("Run loop exited", t);
+        }
+    }
+
+    @Override
+    public void close() {
+        closed = true;
+    }
+
+    public JDBCStatement createWriter() {
+        return in.createAppender() <i class="conum" data-value="6"></i><b>(6)</b>
+                .methodWriterBuilder(JDBCStatement.class)
+                .recordHistory(true)
+                .get();
+    }
+
+    public MethodReader createReader(JDBCResult result) {
+        return out.createTailer().methodReader(result);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Create a thread with a meaningful name. We use an ExecutorService in case we want to do something more complex with it later.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Add this task to the pool</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Create a proxy to write to the output queue</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Start reading after the last message to be successfully processed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Read one message at a time.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Add a helper method to create a writer to the input of this service</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Add a helper method to read the results of this service.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_does_it_perform">How does it perform?</h3>
+<div class="paragraph">
+<p>I tested this writing to HSQLDB which is pretty fast, even writing to a file. Even so, using it as a Service could be useful for very bursty activity as we can handle much higher rates for periods of time.</p>
+</div>
+<div class="paragraph">
+<p>The performance test writes 200K messages as fast as possible and waits for the to all complete.  The first timing is the average latency to write each request, and the second latency is the average time to receive the result.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Average time to write each update 1.5 us, average time to perform each update 29.7 us</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>While HSQLDB was able to sustain over 33 K updates per second, (1 / 29.7 us), the service wrapping could handle bursts of over 660K writes per second. (1 / 1.5 us)  This represents a 20 fold improvement in the burst throughput it can support.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_long_can_a_burst_be">How long can a burst be?</h3>
+<div class="paragraph">
+<p>Both Linux and Windows tend to perform well up to 10% of main memory being "dirty" or not written to disk. For example, if you have 256 GB, you can have 25 GB of "dirty" data.  Even so, if the burst rate is faster than the consuming service, but slow enough that the disk subsystem can keep up, your bursts can exceed main memory size.  To put that in context, if your messages are 256 bytes long, the service could be behind by more than one billion messages, and it will not run out of memory, or fail.  The main limitation in this case, is the amount of free disk space you have.  At the time of posting you can buy 1 TB of Enterprise SSD for less than $600, and Samsung is selling 16 TB SSD drives. I expect  storage costs will continue to fall.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conclusion">Conclusion</h3>
+<div class="paragraph">
+<p>Building a microservice by wrapping a component with an asynchronous API with a transport for messaging in and out has worked without too much complexity.</p>
+</div>
+<div class="paragraph">
+<p>The best way to go fast is to do less work.</p>
+</div>
+</div>
+          </div>
+          <footer class="post-footer">
+            <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
+                <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
+                  <img itemprop="image" src="https://avatars.githubusercontent.com/u/1070321?v&#x3D;3" alt="Peter Lawrey">
+                </a>
+              <div class="post-author-info">
+                <h4 class="post-footer-heading">Written By</h4>
+                <a href="http://vanillajava.blogspot.com/" itemprop="url" class="post-author-name">
+                  <span itemprop="name">Peter Lawrey</span>
+                </a>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~12K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                  <p class="post-author-location">London</p>
+                  <p class="post-author-website">
+                    <a href="http://vanillajava.blogspot.com/" rel="nofollow">http://vanillajava.blogspot.com/</a>
+                  </p>
+                <p class="post-info">
+                  <b class="post-info-title">Published on</b>
+                  <time class="post-date">April 12, 2016</time>
+                </p>
+              </div>
+            </div>
+            <div class="post-social">
+              <h4 class="post-footer-heading">Spread the word</h4>
+              <a href="#" data-action="share-twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
+              <a href="#" data-action="share-facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
+              <a href="#" data-action="share-gplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
+            </div>
+          </footer>
+        </section>
+      <section itemprop="comment" class="post-comments">
+        <div id="disqus_thread"></div>
+      </section>
+    </article>
+
+    <footer role="contentinfo" class="footer">
+      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2017. All Rights Reserved.</small></p>
+      <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
+      <p><small>Adapted by <a href="https://twitter.com/mgreau">Maxime Gréau</a></small></p>
+      <p><small>Published with <a href="http://hubpress.io">HubPress</a></small></p>
+    </footer>
+  </div>
+</section>
+
+
+<section class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+  var disqus_shortname = 'vanillajava'; // required: replace example with your forum shortname
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1504936423326"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-81039510-1', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+
+  </body>
+</html>
