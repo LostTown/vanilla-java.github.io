@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sat, 09 Sep 2017 06:54:20 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[We are hiring]]></title><description><![CDATA[<div class="sect1">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sat, 09 Sep 2017 06:54:51 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[We are hiring]]></title><description><![CDATA[<div class="sect1">
 <h2 id="_low_latency_java_developers">Low latency Java Developers</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -3954,7 +3954,7 @@ This is not intended to be an exhaustive list. It is what we reviewed in the fir
 <div class="sect2">
 <h3 id="_what_does_this_service_do">What does this service do?</h3>
 <div class="paragraph">
-<p>The service supports two messages <code>executeQuery</code> and <code>executeUpdate</code>.  These methods mirror the same methods for <code>PrepatedStatement</code> except the results are passed as messages</p>
+<p>The service supports two messages <code>executeQuery</code> and <code>executeUpdate</code>.  These methods mirror the same methods for <code>PreparedStatement</code> except the results are passed as messages</p>
 </div>
 <div class="listingblock">
 <div class="title">Two asynchronous messages in</div>
