@@ -12,7 +12,7 @@ I would consider this a Gateway Service as it interacts with a system which is o
 
 === What does this service do?
 
-The service supports two messages `executeUpdate` and `executeUpdate`.  These methods mirror the same methods for `PrepatedStatement` except the results are passed as messages
+The service supports two messages `executeQuery` and `executeUpdate`.  These methods mirror the same methods for `PrepatedStatement` except the results are passed as messages
 
 .Two asynchronous messages in
 [source, java]
