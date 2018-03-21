@@ -1,0 +1,58 @@
+= Blockchain basics
+Peter Lawrey
+
+The key difference between blockchain and traditional databases is the level of trust needed in those running the service.  With blockchain you trust the protocol, not those running it.
+
+=== What does a blockchain do?
+
+A blockchain records transactions without needing to trust any individual, organisation or computer, in a tamper proof way (or pretty close).  This serves the same purpose as the record of transaction for your bank account, without needing to trust a bank.
+
+=== What is a blockchain
+
+A **blockchain** is a **chain** of transactions. This chain records which transactions occured and in what order.  The order matters when trying to prevent double spend (spending the same money twice) The servers running a blockchain agree on this order in rounds which can be sub second, up to minutes.  Bitcoin for example has a round every 10 minutes.
+
+If the blockchain could only agree on one transaction every ten minutes, this would be unusable.  Instead they agree on a **block** of transactions, which is like a page of thousands of transactions. By agreeing on blocks at a time, they can process many transactions per second on average.
+
+So a blockchain is a chain of blocks of transactions.
+
+=== How does it differ from a database?
+
+Using by banks, a traditional database can also record transactions. Traditional databases require trust between servers, which isn't usually a problem. Traditional databases are designed to recover from accidental failure, but cannot protect against deliberate attack by one of the  servers. Banks use databases as they provide every server involved and ensure they are secure enough not to be compremised.
+
+From my experience, many blockchain projects could have used a database as there is an assmption of trust between servers running the database. One reason blockchain might have been used as it is a more desirable technology to have experience and expertise in.
+
+=== Characteristics of a blockchain
+
+How nodes running a blockchain come to concensus is important to;
+
+- how much power they consumed.
+- how much trust is required between nodes.
+- how fast it can process transactions
+
+Ideally you want is; low power consumption, low level of trust and a high throughput.  Newer blockchain solutions are looking to achieve these three in combination.
+
+=== Private blockchains
+
+Private blockchains can have a lower overhead, and not publically expose your data, however they generally assume that each of the servers is trusted to a high degree and don't look to protect against actively frawdulant behaviour.  
+
+This doesn't mean you shouldn't have private blockchains, rather that they could have just used a traditional database.
+
+=== Public blockchains
+
+Public blockchains are ones which could be run by anyone with appropirate hardware (and possibly capital for Proof of Stake) trusting the protocol, without needing to trust individuals however they are not completely safe and can be changed.
+
+=== The 50% + 1 attack
+
+If you control 50% + 1 of the nodes of a blockchain, they can override the behaviour of the other just through majority, however you don't need that many to stop one running.
+
+=== The 1/3 attack
+
+If you have a https://en.wikipedia.org/wiki/Byzantine_fault_tolerance[Byzantine Fault] i.e. nodes actively trying to prevent the running of a service, you need to control just 1/3 of the nodes to prevent operation of the service.
+
+Some care needs to be taken to prevent 1/3 of the nodes actively trying to stop operation.
+
+=== Blockchain doesn't have to be complicated
+
+The ecosystem around blockchain is complex and rapidly evolving, however the core of the solution needs to be simple to be easy to verify that it's trustworthy.
+
+Like databases, we will see a variety of solutions to suit different use cases, and many more solution built on top of them to provide services and fill customer needs.
