@@ -38,9 +38,9 @@
     <link href="//fonts.googleapis.com/" rel="dns-prefetch">
     <link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
 
-    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1469274987460"/>
-    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1469274987460"/>
-    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1469274987460"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1521897248187"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1521897248187"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1521897248187"/>
 
 
 
@@ -70,19 +70,20 @@
       GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
     </script>
 
-    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1469274987460"></script>
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1521897248187"></script>
 
     <link rel="canonical" href="https://vanilla-java.github.io/2016/05/17/Modelling-Microservice-Patterns-in-Code.html" />
     <meta name="referrer" content="origin" />
     
     <meta property="og:site_name" content="Vanilla Java" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="article" />
     <meta property="og:title" content="Modelling Microservice Patterns in Code" />
     <meta property="og:description" content="Service Interactions There is a number of simple interactions a service can support.  Which pattern is best for your application can depend on what an existing application expects, and what latency requirements you have.  Broadly speaking these interactions fall into client-server and peir-to-peir messaging. For peir-to-peir messaging, one approac" />
     <meta property="og:url" content="https://vanilla-java.github.io/2016/05/17/Modelling-Microservice-Patterns-in-Code.html" />
+    <meta property="article:published_time" content="2016-05-17T00:00:00.000Z" />
     <meta property="article:tag" content="Microservices" />
-    <meta property="article:tag" content=" Patterns" />
-    <meta property="article:tag" content=" Java" />
+    <meta property="article:tag" content="Patterns" />
+    <meta property="article:tag" content="Java" />
     
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Modelling Microservice Patterns in Code" />
@@ -90,11 +91,31 @@
     <meta name="twitter:url" content="https://vanilla-java.github.io/2016/05/17/Modelling-Microservice-Patterns-in-Code.html" />
     
     <script type="application/ld+json">
-null
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Vanilla Java",
+    "author": {
+        "@type": "Person",
+        "name": "Peter Lawrey",
+        "image": "https://avatars0.githubusercontent.com/u/1070321?v=4",
+        "url": "https://vanilla-java.github.io/author/peter-lawrey/",
+        "sameAs": "http://vanillajava.blogspot.com/",
+        "description": "Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion"
+    },
+    "headline": "Modelling Microservice Patterns in Code",
+    "url": "https://vanilla-java.github.io/2016/05/17/Modelling-Microservice-Patterns-in-Code.html",
+    "datePublished": "2016-05-17T00:00:00.000Z",
+    "keywords": "Microservices, Patterns, Java",
+    "description": "Service Interactions There is a number of simple interactions a service can support.  Which pattern is best for your application can depend on what an existing application expects, and what latency requirements you have.  Broadly speaking these interactions fall into client-server and peir-to-peir messaging. For peir-to-peir messaging, one approac"
+}
     </script>
 
     <meta name="generator" content="HubPress" />
     <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/atom-one-dark.min.css">
+    
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
   </head>
   <body class="post-template tag-Microservices tag-Patterns tag-Java">
 
@@ -145,6 +166,11 @@ null
               <i class="fa fa-linkedin"></i>LinkedIn
             </a>
           </li>
+          <li class="drawer-list-item">
+            <a href="peter-lawrey" title="StackOverflow" target="_blank">
+              <i class="fa fa-stack-overflow"></i>Stack Overflow
+            </a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -163,13 +189,13 @@ null
             <ul class="post-meta-list">
               <li class="post-meta-item">
                 <time datetime="2016-05-17" itemprop="datePublished">
-                  2 months ago
+                  2 years ago
                 </time>
               </li>
                 <li class="post-meta-item">
                   <span class="tags"><i class="fa fa-tags"></i>
                       <span>
-                      <a href="https://vanilla-java.github.io/tag/Microservices/">Microservices</a>, <a href="https://vanilla-java.github.io/tag/Patterns/"> Patterns</a>, <a href="https://vanilla-java.github.io/tag/Java/"> Java</a></span>
+                      <a href="https://vanilla-java.github.io/tag/Microservices/">Microservices</a>, <a href="https://vanilla-java.github.io/tag/Patterns/">Patterns</a>, <a href="https://vanilla-java.github.io/tag/Java/">Java</a></span>
                   </span>
                 </li>
               <li class="post-meta-item">
@@ -182,13 +208,13 @@ null
           <aside class="post-side">
             <div class="post-author">
                 <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
-                  <img src="https://avatars.githubusercontent.com/u/1070321?v&#x3D;3" alt="Peter Lawrey">
+                  <img src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
                 </a>
               <div class="post-author-info">
                 <a href="http://vanillajava.blogspot.com/" class="post-author-name">
                   Peter Lawrey
                 </a>
-                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~12K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
               </div>
             </div>
           </aside>
@@ -626,14 +652,14 @@ This allows different clients to be working with dfferent versions of heartbeat 
           <footer class="post-footer">
             <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
                 <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
-                  <img itemprop="image" src="https://avatars.githubusercontent.com/u/1070321?v&#x3D;3" alt="Peter Lawrey">
+                  <img itemprop="image" src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
                 </a>
               <div class="post-author-info">
                 <h4 class="post-footer-heading">Written By</h4>
                 <a href="http://vanillajava.blogspot.com/" itemprop="url" class="post-author-name">
                   <span itemprop="name">Peter Lawrey</span>
                 </a>
-                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~12K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
                   <p class="post-author-location">London</p>
                   <p class="post-author-website">
                     <a href="http://vanillajava.blogspot.com/" rel="nofollow">http://vanillajava.blogspot.com/</a>
@@ -658,7 +684,7 @@ This allows different clients to be working with dfferent versions of heartbeat 
     </article>
 
     <footer role="contentinfo" class="footer">
-      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2016. All Rights Reserved.</small></p>
+      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2018. All Rights Reserved.</small></p>
       <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
       <p><small>Adapted by <a href="https://twitter.com/mgreau">Maxime Gréau</a></small></p>
       <p><small>Published with <a href="http://hubpress.io">HubPress</a></small></p>
@@ -688,7 +714,7 @@ This allows different clients to be working with dfferent versions of heartbeat 
       </div>
     </main>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js?v="></script> 
       <script type="text/javascript">
         jQuery( document ).ready(function() {
           // change date with ago
@@ -701,7 +727,7 @@ This allows different clients to be working with dfferent versions of heartbeat 
         hljs.initHighlightingOnLoad();
       </script>
 
-    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1469274987460"></script>
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1521897248187"></script>
 
     <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

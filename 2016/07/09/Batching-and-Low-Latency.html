@@ -38,9 +38,9 @@
     <link href="//fonts.googleapis.com/" rel="dns-prefetch">
     <link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400&subset=latin,latin-ext" rel="stylesheet">
 
-    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1469274987421"/>
-    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1469274987421"/>
-    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1469274987421"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/main.min.css?v=1521897248175"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/custom.css?v=1521897248175"/>
+    <link rel="stylesheet" href="//vanilla-java.github.io/themes/ghostium/assets/css/asciidoctor-foundation.css?v=1521897248175"/>
 
 
 
@@ -70,19 +70,20 @@
       GHOSTIUM.enablePjax = typeof enable_pjax !== 'undefined' ? enable_pjax : true;
     </script>
 
-    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1469274987421"></script>
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/head-scripts.min.js?v=1521897248175"></script>
 
     <link rel="canonical" href="https://vanilla-java.github.io/2016/07/09/Batching-and-Low-Latency.html" />
     <meta name="referrer" content="origin" />
     
     <meta property="og:site_name" content="Vanilla Java" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="article" />
     <meta property="og:title" content="Batching and Low Latency" />
     <meta property="og:description" content="This is testing the next release of Chronicle Queue 4.5.0 Why batch your data? Batching of multiple messages or updates into a single transaction is a common technique for improving performance, in particular it is useful for increasing throughput (messages per second) when the latency (time to process" />
     <meta property="og:url" content="https://vanilla-java.github.io/2016/07/09/Batching-and-Low-Latency.html" />
+    <meta property="article:published_time" content="2016-07-09T00:00:00.000Z" />
     <meta property="article:tag" content="Microservices" />
-    <meta property="article:tag" content=" Batching" />
-    <meta property="article:tag" content=" Low Latency" />
+    <meta property="article:tag" content="Batching" />
+    <meta property="article:tag" content="Low Latency" />
     
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Batching and Low Latency" />
@@ -90,11 +91,31 @@
     <meta name="twitter:url" content="https://vanilla-java.github.io/2016/07/09/Batching-and-Low-Latency.html" />
     
     <script type="application/ld+json">
-null
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Vanilla Java",
+    "author": {
+        "@type": "Person",
+        "name": "Peter Lawrey",
+        "image": "https://avatars0.githubusercontent.com/u/1070321?v=4",
+        "url": "https://vanilla-java.github.io/author/peter-lawrey/",
+        "sameAs": "http://vanillajava.blogspot.com/",
+        "description": "Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion"
+    },
+    "headline": "Batching and Low Latency",
+    "url": "https://vanilla-java.github.io/2016/07/09/Batching-and-Low-Latency.html",
+    "datePublished": "2016-07-09T00:00:00.000Z",
+    "keywords": "Microservices, Batching, Low Latency",
+    "description": "This is testing the next release of Chronicle Queue 4.5.0 Why batch your data? Batching of multiple messages or updates into a single transaction is a common technique for improving performance, in particular it is useful for increasing throughput (messages per second) when the latency (time to process"
+}
     </script>
 
     <meta name="generator" content="HubPress" />
     <link rel="alternate" type="application/rss+xml" title="Vanilla Java" href="https://vanilla-java.github.io/rss/" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/atom-one-dark.min.css">
+    
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
   </head>
   <body class="post-template tag-Microservices tag-Batching tag-Low-Latency">
 
@@ -145,6 +166,11 @@ null
               <i class="fa fa-linkedin"></i>LinkedIn
             </a>
           </li>
+          <li class="drawer-list-item">
+            <a href="peter-lawrey" title="StackOverflow" target="_blank">
+              <i class="fa fa-stack-overflow"></i>Stack Overflow
+            </a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -163,32 +189,32 @@ null
             <ul class="post-meta-list">
               <li class="post-meta-item">
                 <time datetime="2016-07-09" itemprop="datePublished">
-                  15 days ago
+                  2 years ago
                 </time>
               </li>
                 <li class="post-meta-item">
                   <span class="tags"><i class="fa fa-tags"></i>
                       <span>
-                      <a href="https://vanilla-java.github.io/tag/Microservices/">Microservices</a>, <a href="https://vanilla-java.github.io/tag/Batching/"> Batching</a>, <a href="https://vanilla-java.github.io/tag/Low-Latency/"> Low Latency</a></span>
+                      <a href="https://vanilla-java.github.io/tag/Microservices/">Microservices</a>, <a href="https://vanilla-java.github.io/tag/Batching/">Batching</a>, <a href="https://vanilla-java.github.io/tag/Low-Latency/">Low Latency</a></span>
                   </span>
                 </li>
               <li class="post-meta-item">
                 <a href="#disqus_thread" data-disqus-identifier="">Comments</a>
               </li>
             </ul>
-            <h1 itemprop="name headline" class="post-title"><a href="https://vanilla-java.github.io/2016/07/09/Batching-and-Low-Latency.html" itemprop="url" data-pjax title="Batching and Low Latency">Batching and Low Latency</a></h1>
+            <h1 itemprop="name headline" class="post-title"><a href="/" itemprop="url" data-pjax title="Batching and Low Latency">Batching and Low Latency</a></h1>
             <!--h2 itemprop="about" class="post-subtitle"></h2-->
           </header>
           <aside class="post-side">
             <div class="post-author">
                 <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
-                  <img src="https://avatars.githubusercontent.com/u/1070321?v&#x3D;3" alt="Peter Lawrey">
+                  <img src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
                 </a>
               <div class="post-author-info">
                 <a href="http://vanillajava.blogspot.com/" class="post-author-name">
                   Peter Lawrey
                 </a>
-                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~12K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                <p class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
               </div>
             </div>
           </aside>
@@ -551,14 +577,14 @@ This is testing the next release of Chronicle Queue 4.5.0
           <footer class="post-footer">
             <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="post-author">
                 <a href="http://vanillajava.blogspot.com/" class="post-author-avatar">
-                  <img itemprop="image" src="https://avatars.githubusercontent.com/u/1070321?v&#x3D;3" alt="Peter Lawrey">
+                  <img itemprop="image" src="https://avatars0.githubusercontent.com/u/1070321?v&#x3D;4" alt="Peter Lawrey">
                 </a>
               <div class="post-author-info">
                 <h4 class="post-footer-heading">Written By</h4>
                 <a href="http://vanillajava.blogspot.com/" itemprop="url" class="post-author-name">
                   <span itemprop="name">Peter Lawrey</span>
                 </a>
-                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~12K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
+                <p itemprop="description" class="post-author-bio">Most answers for Java and JVM on StackOverflow.com (~13K), &quot;Vanilla Java&quot; blog with four million views, founder of the Performance JUG,  Java Champion</p>
                   <p class="post-author-location">London</p>
                   <p class="post-author-website">
                     <a href="http://vanillajava.blogspot.com/" rel="nofollow">http://vanillajava.blogspot.com/</a>
@@ -583,7 +609,7 @@ This is testing the next release of Chronicle Queue 4.5.0
     </article>
 
     <footer role="contentinfo" class="footer">
-      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2016. All Rights Reserved.</small></p>
+      <p><small>Copyright &copy; <span itemprop="copyrightHolder">Vanilla Java</span>. 2018. All Rights Reserved.</small></p>
       <p><small><a href="http://ghostium.oswaldoacauan.com/" target="_blank">Ghostium Theme</a> by <a href="http://twitter.com/oswaldoacauan" target="_blank">@oswaldoacauan</a></small></p>
       <p><small>Adapted by <a href="https://twitter.com/mgreau">Maxime Gréau</a></small></p>
       <p><small>Published with <a href="http://hubpress.io">HubPress</a></small></p>
@@ -613,7 +639,7 @@ This is testing the next release of Chronicle Queue 4.5.0
       </div>
     </main>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js?v="></script> 
       <script type="text/javascript">
         jQuery( document ).ready(function() {
           // change date with ago
@@ -626,7 +652,7 @@ This is testing the next release of Chronicle Queue 4.5.0
         hljs.initHighlightingOnLoad();
       </script>
 
-    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1469274987421"></script>
+    <script src="//vanilla-java.github.io/themes/ghostium/assets/js/foot-scripts.min.js?v=1521897248175"></script>
 
     <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
