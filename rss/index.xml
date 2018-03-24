@@ -1,4 +1,182 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Wed, 21 Mar 2018 20:23:34 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Blockchain basics]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vanilla Java]]></title><description><![CDATA[Vanilla Java]]></description><link>https://vanilla-java.github.io</link><image><url>https://raw.githubusercontent.com/Vanilla-Java/vanilla-java.github.io/master/images/French-Vanilla-Java.jpg</url><title>Vanilla Java</title><link>https://vanilla-java.github.io</link></image><generator>RSS for Node</generator><lastBuildDate>Sat, 24 Mar 2018 11:33:18 GMT</lastBuildDate><atom:link href="https://vanilla-java.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Blockchain Design considerations]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>I recently accounced the release of Chronicle Accelerate, a high throughput blockchain solution in Java. One of the questions which came up was; What were the design considerations that went into the solution, particualrly around throughput vs latency?</p>
+</div>
+<div class="paragraph">
+<p>Many of these design considerations are not specific to Blockchain or Java, but general performance tuning.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This is a draft which needs to be reviewed / spell checked etc.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If you have any questions, please AMA <a href="https://t.me/ChronicleXCL" class="bare">https://t.me/ChronicleXCL</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_why_use_java">Why use Java?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you want maximum performance, why use Java?</p>
+</div>
+<div class="paragraph">
+<p>This has two assumptions; what are you maximising the performance of, and is the Java portion a bottleneck anyway.</p>
+</div>
+<div class="paragraph">
+<p>In most IT solutions, the cost of the hardware is small compared with the cost of IT development, esp if you don&#8217;t use a solution which is designed to be expensive such as Proof of Work.  Use a lower CPU model, and the resource you want to maximise is development of the solution ie people. Most of the cost of development is actually in integration with existing systems. So you want to spend most of your time designing a system which is easy to develop and integrate with.
+Java is one of the most widely used languages, and one of the easiest to master all it&#8217;s lean set of features. By supporting multiple common APIs from the start, you make sure ease of integration is there from the start.</p>
+</div>
+<div class="paragraph">
+<p>In terms of the blockchain solution we chose, the key bottleneck CPU wise is the Ed25519 signature and verification.  The core of this algorithm is actually written in assembly to maximise performance. In designing a "maxed out" node to get the highest throughput per sub chain I would estimate the number of CPUs to be</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Code type</th>
+<th class="tableblock halign-left valign-top">CPUs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assembly (Ed25519)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&nbsp;40</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Operating System (Mostly TCP)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&nbsp;24</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Java</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&nbsp;&nbsp;4</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>While all the interesting custom development and business logic will be in Java, most of the CPU will be consumed by code already written and optimised in another language.</p>
+</div>
+<div class="paragraph">
+<p>In short, we want to maximise developer efficiency, and most of the CPU consumed isn&#8217;t written in Java anyway.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_why_develop_a_blockchain">Why develop a Blockchain?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Many solutions which are blockchain based, when they optimise the CPU consumed end up taking away some of the reason for having a blockchain in the first place.  If all you end up developing is a distributed ledger or a simple database, I don&#8217;t see the point as these solutions already exist.  Making them more blockchain-y might be a good marketing tactic.</p>
+</div>
+<div class="paragraph">
+<p>An essential feature with makes a blockchain different is; not needing to trust individual nodes are fraudulant. If we optimise the solution but lose this feature in the process, we really have a distributed ledger (sometimes called a "Private Blockchain")  Basically if you have a blockchain which can&#8217;t be run/mined publically I wonder what the point is techincally.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ways_of_protecting_against_fraud">Ways of protecting against fraud</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Fraud protection reduces mofification and create false messages. It doesn&#8217;t prevent reading those messages which can be a problem in itself, but can to be handled another way.</p>
+</div>
+<div class="paragraph">
+<p>In our case, we use of signatures to transactions so that only the holder of a private key can create or modify the the transaction.  For this case we use Ed25519 as one of the fastest 256-bit signatures.</p>
+</div>
+<div class="paragraph">
+<p>Use of such a signature and verify, adds significantly to latency.  The backend blockchain add about 2.5 micro-seconds latency however the verify and sign needed adds about 100 micro-seconds.  While we can add CPUs to increase throughput, they won&#8217;t help in reducing latency.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_optimising_for_throughput">Optimising for throughput</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>While most system optimise for throughput, trading systems tend to optimise for latency.  Reduce latency enough and you will also get the throughput you need.  Whether you optimise for throughput or latency depends on type of problem you have. If many portions of the work can be done at once without having to work together, you can optimise for throughput, esp as this is usually easier.  If you have have key portions of work which must be performed in order e.g. transactions, you have to reduce the latency of each one to increase throughput.</p>
+</div>
+<div class="paragraph">
+<p>As we have identified, most of the work is CPU bound, and independant. To identify how to optimise the system, we need to examine which pieces need to be serialized.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_identifying_serial_bottlenecks">Identifying serial bottlenecks</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Concurrent</th>
+<th class="tableblock halign-left valign-top">Serial</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sign/verify</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Concensus</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Client TCP</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Transacton processing</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="_concensus">Concensus</h3>
+<div class="paragraph">
+<p>The cost of concesus increases with the rate at which this happens O(N), and the number of nodes in the cluster O(M ln M). In the later case, M nodes have M times the processing power so the overhead is just O(ln M)</p>
+</div>
+<div class="paragraph">
+<p>However, both of these are in our control. We determine how often concesus is reached. We decide if its 10 ms, 1 s or 1 minute. Obviously we want this to be low, as this largely determines the latency of each transaction, however we can adjust it to suit our needs.</p>
+</div>
+<div class="paragraph">
+<p>The number of nodes in the cluster is also something we have some control over.  We don&#8217;t want too few nodes, but we get diminishing returns and increasing cost on having more nodes.</p>
+</div>
+<div class="paragraph">
+<p>In our case, we are looking to split the chain to improve effecency once we have more nodes than we need in a chain.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The cost of concensus doesn&#8217;t increase with throughput, and is largely constant. i.e. when there is no transactions, confirming nothing is happening is all the nodes will do.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_transaction_processing">Transaction processing</h3>
+<div class="paragraph">
+<p>The cost of processing increases with throughput, and this determines the limit as to how much each sub-chain can do. Our aim is to make processing each transaction as light weight as possible. Current each transaction takes around 2.5 micro-seconds, which means the throughput achievable is 400K per second (1/2.5 us)  We believe this can be improved, however with the option of having thousands of sub-chains, we might never need to do this.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusion">Conclusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>TBD</p>
+</div>
+</div>
+</div>]]></description><link>https://vanilla-java.github.io/2018/03/24/Blockchain-Design-considerations.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2018/03/24/Blockchain-Design-considerations.html</guid><category><![CDATA[Blockchain]]></category><category><![CDATA[Architecture Design]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 24 Mar 2018 00:00:00 GMT</pubDate></item><item><title><![CDATA[Blockchain basics]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>The key difference between blockchain and traditional databases is the level of trust needed in those running the service.  With blockchain you trust the protocol, not those running it.</p>
@@ -454,7 +632,7 @@ Not all default methods are bad, we still use them often without a problem. Only
 <div class="paragraph">
 <p>While minimising the latency of outliers is tricky, reducing the 99%ile latency can improve the consistency dramatically and increase the throughput you can safely sustain.</p>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2017/02/06/Improving-percentile-latencies-in-Chronicle-Queue.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/02/06/Improving-percentile-latencies-in-Chronicle-Queue.html</guid><category><![CDATA[Chronicle Queue]]></category><category><![CDATA[ Low Latency]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Mon, 06 Feb 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Chronicle Queue storing 1 TB in virtual memory on a 128 GB machine]]></title><description><![CDATA[<div id="preamble">
+</div>]]></description><link>https://vanilla-java.github.io/2017/02/06/Improving-percentile-latencies-in-Chronicle-Queue.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/02/06/Improving-percentile-latencies-in-Chronicle-Queue.html</guid><category><![CDATA[Chronicle Queue]]></category><category><![CDATA[Low Latency]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Mon, 06 Feb 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Chronicle Queue storing 1 TB in virtual memory on a 128 GB machine]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>If you use a standard JVM like the Oracle JVM, or the OpenJDK, you might find that as the heap size grows the performance of your JVM can drop as GC pause time escalates.  This tends to be a problem around 32 GB of heap, but it often depends on the application at which point the size of you heap becomes a problem.</p>
@@ -556,7 +734,7 @@ Having a queue larger than main memory only works on Unix at the moment. On Wind
 </tr>
 </table>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2017/01/27/Chronicle-Queue-storing-1-TB-in-virtual-memory-on-a-128-GB-machine.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/01/27/Chronicle-Queue-storing-1-TB-in-virtual-memory-on-a-128-GB-machine.html</guid><category><![CDATA[Chronicle Queue]]></category><category><![CDATA[ Off Heap]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Fri, 27 Jan 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Choosing Chronicle FIX Engine]]></title><description><![CDATA[<div class="sect1">
+</div>]]></description><link>https://vanilla-java.github.io/2017/01/27/Chronicle-Queue-storing-1-TB-in-virtual-memory-on-a-128-GB-machine.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/01/27/Chronicle-Queue-storing-1-TB-in-virtual-memory-on-a-128-GB-machine.html</guid><category><![CDATA[Chronicle Queue]]></category><category><![CDATA[Off Heap]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Fri, 27 Jan 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Choosing Chronicle FIX Engine]]></title><description><![CDATA[<div class="sect1">
 <h2 id="_overview">Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -793,7 +971,7 @@ A: We have a HTML5 GUI for monitoring sessions and querying logs of messages.</p
 </div>
 </div>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2017/01/20/Choosing-Chronicle-FIX-Engine.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/01/20/Choosing-Chronicle-FIX-Engine.html</guid><category><![CDATA[Chronicle FIX]]></category><category><![CDATA[ FAQ]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Fri, 20 Jan 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[IT experts you should follow on twitter]]></title><description><![CDATA[<div id="preamble">
+</div>]]></description><link>https://vanilla-java.github.io/2017/01/20/Choosing-Chronicle-FIX-Engine.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2017/01/20/Choosing-Chronicle-FIX-Engine.html</guid><category><![CDATA[Chronicle FIX]]></category><category><![CDATA[FAQ]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Fri, 20 Jan 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[IT experts you should follow on twitter]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>When I read lists like this they always seem to be male dominated, so here is a list of experts I follow which isn&#8217;t.</p>
@@ -1458,7 +1636,7 @@ Some problems have inherent limits to the number of independant tasks you have. 
 <p>If you have a problem with many thousands of independant tasks, then high number of tasks "in flight", or customers in the store, is a relatively simple way to get the throughput you need and the impact of latency is low.  If you have a few tasks, or just one task you can perform at a given moment, latency rather than throughput is critical.</p>
 </div>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/07/23/Why-dont-I-get-the-throughput-I-benchmarked.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/07/23/Why-dont-I-get-the-throughput-I-benchmarked.html</guid><category><![CDATA[Performance]]></category><category><![CDATA[ Low Latency]]></category><category><![CDATA[ Benchmarking]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 23 Jul 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Improving performance with simple compression]]></title><description><![CDATA[<div id="preamble">
+</div>]]></description><link>https://vanilla-java.github.io/2016/07/23/Why-dont-I-get-the-throughput-I-benchmarked.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/07/23/Why-dont-I-get-the-throughput-I-benchmarked.html</guid><category><![CDATA[Performance]]></category><category><![CDATA[Low Latency]]></category><category><![CDATA[Benchmarking]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 23 Jul 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Improving performance with simple compression]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>Chronicle Wire supports multiple Wire Formats such as YAML, JSON and CSV. It also supports a binary format of YAML for performance.  Chronicle Wire Enteprise has an additional Wire Format which performs simple compression which can be faster AND smaller than not compressing data.</p>
@@ -1688,7 +1866,7 @@ After delta-ring you can still use generic compression to obtain a further reduc
 <div class="paragraph">
 <p>If you get stuck, you can ask questions on our <a href="https://groups.google.com/forum/#!forum/java-chronicle">Google Group</a> and if you find a issue, please let us know via the Issue tab on GitHub for each project.</p>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/07/21/Contributing-to-Chronicle.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/07/21/Contributing-to-Chronicle.html</guid><category><![CDATA[Getting Involved]]></category><category><![CDATA[ Microservices]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 21 Jul 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Latency for a set Throughput]]></title><description><![CDATA[<div id="preamble">
+</div>]]></description><link>https://vanilla-java.github.io/2016/07/21/Contributing-to-Chronicle.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/07/21/Contributing-to-Chronicle.html</guid><category><![CDATA[Getting Involved]]></category><category><![CDATA[Microservices]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 21 Jul 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Latency for a set Throughput]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>Without a set throughput, a latency measurement might be meaningless. Often you see benchmark results with throughput measurements, and sometimes the include latency measurements. However, latency varies with the throughput you perform, and without the throughput you have little idea of what the latency means.  Conversely, without an idea of what latencies you find acceptable, the throughput you can achieve for an acceptable latency might not be the maximum throughput you can stress test your system up to.</p>
@@ -2216,7 +2394,7 @@ This is testing the next release of Chronicle Queue 4.5.0
 <div class="paragraph">
 <p>More investigation is required to draw any conclusions.</p>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/07/09/Batching-and-Low-Latency.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/07/09/Batching-and-Low-Latency.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[ Batching]]></category><category><![CDATA[ Low Latency]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 09 Jul 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Goldilocks Microservices]]></title><description><![CDATA[<div class="sect2">
+</div>]]></description><link>https://vanilla-java.github.io/2016/07/09/Batching-and-Low-Latency.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/07/09/Batching-and-Low-Latency.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Batching]]></category><category><![CDATA[Low Latency]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 09 Jul 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Goldilocks Microservices]]></title><description><![CDATA[<div class="sect2">
 <h3 id="_how_to_structure_microservices">How to structure microservices?</h3>
 <div class="paragraph">
 <p>When structuring microservices we have to consider;</p>
@@ -2336,7 +2514,7 @@ This is testing the next release of Chronicle Queue 4.5.0
 <div class="footnote" id="_footnote_1">
 <a href="#_footnoteref_1">1</a>. a thread pool might have one thread
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/06/30/Goldilocks-Microservices.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/06/30/Goldilocks-Microservices.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[ Right Sizing]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 30 Jun 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Reviewing Exception Handling]]></title><description><![CDATA[<div id="preamble">
+</div>]]></description><link>https://vanilla-java.github.io/2016/06/30/Goldilocks-Microservices.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/06/30/Goldilocks-Microservices.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Right Sizing]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 30 Jun 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Reviewing Exception Handling]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>When developing an application it can be hard enough to get the happy path working, let alone worry about what might happen when something goes wrong.</p>
@@ -3023,7 +3201,7 @@ default void get(Object key, ThrowableConsumer&lt;V&gt; consumer) {
 </div>
 </div>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/06/04/Distributing-Common-Java-A-P-Is.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/06/04/Distributing-Common-Java-A-P-Is.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[ Data Containers]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 04 Jun 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Modelling Microservice Patterns in Code]]></title><description><![CDATA[<div class="sect2">
+</div>]]></description><link>https://vanilla-java.github.io/2016/06/04/Distributing-Common-Java-A-P-Is.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/06/04/Distributing-Common-Java-A-P-Is.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Data Containers]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 04 Jun 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Modelling Microservice Patterns in Code]]></title><description><![CDATA[<div class="sect2">
 <h3 id="_service_interactions">Service Interactions</h3>
 <div class="paragraph">
 <p>There is a number of simple interactions a service can support.  Which pattern is best for your application can depend on what an existing application expects, and what latency requirements you have.  Broadly speaking these interactions fall into client-server and peir-to-peir messaging.</p>
@@ -3451,7 +3629,7 @@ This allows different clients to be working with dfferent versions of heartbeat 
 <p>These interactions can be performed without a transport i.e. one component directly calls another to make testing and debugging easier.</p>
 </div>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/05/17/Modelling-Microservice-Patterns-in-Code.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/05/17/Modelling-Microservice-Patterns-in-Code.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[ Patterns]]></category><category><![CDATA[ Java]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Tue, 17 May 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Simple Asynchronous Microservices using Lambda Architecture.]]></title><description><![CDATA[<div class="sect2">
+</div>]]></description><link>https://vanilla-java.github.io/2016/05/17/Modelling-Microservice-Patterns-in-Code.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/05/17/Modelling-Microservice-Patterns-in-Code.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Patterns]]></category><category><![CDATA[Java]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Tue, 17 May 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Simple Asynchronous Microservices using Lambda Architecture.]]></title><description><![CDATA[<div class="sect2">
 <h3 id="_lambda_architecture">Lambda Architecture</h3>
 <div class="paragraph">
 <p>Lambda Architecture is a simple, powerful, though limited example of a Microservice. As it is so simple, you want to use it as much as possible, to expose the more complex services/component in your system which cannot support this interaction model.</p>
@@ -3531,7 +3709,7 @@ This allows different clients to be working with dfferent versions of heartbeat 
 <div class="paragraph">
 <p>For low latency, high throughput persistence we recommend using <a href="http://chronicle.software/products/chronicle-queue/">Chronicle Queue</a> which is Apache 2.0 open source project available at <a href="https://github.com/OpenHFT/Chronicle-Queue" class="bare">https://github.com/OpenHFT/Chronicle-Queue</a> and on <a href="http://search.maven.org/#search%7Cga%7C1%7Cchronicle%20queue">Maven Central</a></p>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/05/16/Simple-Asynchronous-Microservices-using-Lambda-Architecture.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/05/16/Simple-Asynchronous-Microservices-using-Lambda-Architecture.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[ Lambda Architecture]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Mon, 16 May 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices are about applying a group of Best Practices]]></title><description><![CDATA[<div class="sect2">
+</div>]]></description><link>https://vanilla-java.github.io/2016/05/16/Simple-Asynchronous-Microservices-using-Lambda-Architecture.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/05/16/Simple-Asynchronous-Microservices-using-Lambda-Architecture.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Lambda Architecture]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Mon, 16 May 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices are about applying a group of Best Practices]]></title><description><![CDATA[<div class="sect2">
 <h3 id="_microservices_denial">Microservices Denial</h3>
 <div class="paragraph">
 <p>A number of times clients have said; they can&#8217;t imagine their organisation using Microservices.
@@ -3725,7 +3903,7 @@ This is not intended to be an exhaustive list. It is what we reviewed in the fir
 <p>You can email us on <a href="mailto:sales@chronicle.software">sales@chronicle.software</a></p>
 </div>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/04/30/Microservices-are-about-applying-a-group-of-Best-Practices.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/04/30/Microservices-are-about-applying-a-group-of-Best-Practices.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[ Best Practice]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 30 Apr 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Bad String]]></title><description><![CDATA[<div id="preamble">
+</div>]]></description><link>https://vanilla-java.github.io/2016/04/30/Microservices-are-about-applying-a-group-of-Best-Practices.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/04/30/Microservices-are-about-applying-a-group-of-Best-Practices.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Best Practice]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 30 Apr 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Bad String]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>This program has two threads printing messages alternatively.  However if you change a <code>String</code> from <code>"cC"</code> to <code>"cc"</code> it doesn&#8217;t print anything, WHY?</p>
@@ -4023,7 +4201,7 @@ This is not intended to be an exhaustive list. It is what we reviewed in the fir
 <div class="paragraph">
 <p>The best way to go fast is to do less work.</p>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/04/12/A-JDBC-Gateway-Microservice.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/04/12/A-JDBC-Gateway-Microservice.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[ JDBC]]></category><category><![CDATA[ Example]]></category><dc:creator><![CDATA[Catherine Lawrey]]></dc:creator><pubDate>Tue, 12 Apr 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices in the Chronicle World - Part 5]]></title><description><![CDATA[<div id="preamble">
+</div>]]></description><link>https://vanilla-java.github.io/2016/04/12/A-JDBC-Gateway-Microservice.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/04/12/A-JDBC-Gateway-Microservice.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[JDBC]]></category><category><![CDATA[Example]]></category><dc:creator><![CDATA[Catherine Lawrey]]></dc:creator><pubDate>Tue, 12 Apr 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices in the Chronicle World - Part 5]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>In this part we look at putting a micro service together as a collection of services, and consider how we can evaluate the performance of these services.  We introduce JLBH (Java Latency Benchmark Harness) to test these services.</p>
@@ -4374,7 +4552,7 @@ Every message is being persisted at each stage and is available on restart. As t
 <div class="paragraph">
 <p>We have a test harness for multi-threaded asynchronous processes and it can help you explore how your service might behave under various throughput loads.  While your system might be able to support high throughputs for very short periods of time, how sustained throughput impacts the latency of your system.</p>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/04/02/Microservices-in-the-Chronicle-World-Part-5.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/04/02/Microservices-in-the-Chronicle-World-Part-5.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[ latency profile]]></category><category><![CDATA[ JLBH]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 02 Apr 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices in the Chronicle world - Part 4]]></title><description><![CDATA[<div id="preamble">
+</div>]]></description><link>https://vanilla-java.github.io/2016/04/02/Microservices-in-the-Chronicle-World-Part-5.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/04/02/Microservices-in-the-Chronicle-World-Part-5.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[latency profile]]></category><category><![CDATA[JLBH]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 02 Apr 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices in the Chronicle world - Part 4]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>A common issue we cover in our workshops is, <em>how to restart a queue reader after a failure.</em></p>
@@ -4508,7 +4686,7 @@ In particular, and output queue can help:</p>
 <div class="paragraph">
 <p><a href="https://vanilla-java.github.io/2016/04/02/Microservices-in-the-Chronicle-World-Part-5.html">How does this perform end to end with multiple asynchronous services are how can we measure there?</a></p>
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/03/29/Microservices-in-the-Chronicle-world-Part-4.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/03/29/Microservices-in-the-Chronicle-world-Part-4.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[ Restarting]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Tue, 29 Mar 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices in the Chronicle World - Part 3]]></title><description><![CDATA[<div id="preamble">
+</div>]]></description><link>https://vanilla-java.github.io/2016/03/29/Microservices-in-the-Chronicle-world-Part-4.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/03/29/Microservices-in-the-Chronicle-world-Part-4.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Restarting]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Tue, 29 Mar 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices in the Chronicle World - Part 3]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>One of the problems with using microservices is performance.  <strong>Latencies</strong> can be higher due to the cost of <strong>serialization</strong>, messaging and deserialization, and this reduces <strong>throughput</strong>.  In particular, poor throughput is a problem because the reason we are designing a <a href="http://searchdatacenter.techtarget.com/definition/scalability">scalable system</a><sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup> is to increase throughput.</p>
@@ -4774,7 +4952,7 @@ new Runner(opt).run();</code></pre>
 <div class="footnote" id="_footnote_4">
 <a href="#_footnoteref_4">4</a>. Wikipedia. (2016). Serialization. Online. Available at: <a href="https://en.wikipedia.org/wiki/Serialization" class="bare">https://en.wikipedia.org/wiki/Serialization</a>. Accessed Jul. 2016.
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/03/26/Microservices-in-the-Chronicle-World-Part-3.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/03/26/Microservices-in-the-Chronicle-World-Part-3.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[ JMH]]></category><category><![CDATA[ Chronicle-Queue]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 26 Mar 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices in the Chronicle world - Part 2]]></title><description><![CDATA[<div id="preamble">
+</div>]]></description><link>https://vanilla-java.github.io/2016/03/26/Microservices-in-the-Chronicle-World-Part-3.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/03/26/Microservices-in-the-Chronicle-World-Part-3.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[JMH]]></category><category><![CDATA[Chronicle-Queue]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Sat, 26 Mar 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices in the Chronicle world - Part 2]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>In this part we look at turning a component into a service.</p>
@@ -5091,7 +5269,7 @@ onOrderIdea: {
 <div class="footnote" id="_footnote_10">
 <a href="#_footnoteref_10">10</a>. Beal, V. (2016). What is Middleware? Webopedia Definition. Online. Webopedia.com. Available at: <a href="http://www.webopedia.com/TERM/M/middleware.html" class="bare">http://www.webopedia.com/TERM/M/middleware.html</a>. Accessed Jul. 2016
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/03/24/Microservices-in-the-Chronicle-world-Part-2.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/03/24/Microservices-in-the-Chronicle-world-Part-2.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[ Chronicle-Queue]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 24 Mar 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices in the Chronicle world - Part 1]]></title><description><![CDATA[<div id="preamble">
+</div>]]></description><link>https://vanilla-java.github.io/2016/03/24/Microservices-in-the-Chronicle-world-Part-2.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/03/24/Microservices-in-the-Chronicle-world-Part-2.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[Chronicle-Queue]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Thu, 24 Mar 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Microservices in the Chronicle world - Part 1]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>At a high level, different <strong>Microservice</strong> strategies have a lot in common.  They subscribe to the same ideals.
@@ -5495,7 +5673,7 @@ it takes almost no time at all to start up the test and debug it in your IDE.  Y
 <div class="footnote" id="_footnote_4">
 <a href="#_footnoteref_4">4</a>. Wikipedia. (2016). Stack trace. Online. Available at: <a href="https://en.wikipedia.org/wiki/Stack_trace" class="bare">https://en.wikipedia.org/wiki/Stack_trace</a>. Accessed Jul. 2016
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/03/23/Microservices-in-the-Chronicle-world-Part-1.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/03/23/Microservices-in-the-Chronicle-world-Part-1.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[ examples]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Wed, 23 Mar 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Micro-services for performance]]></title><description><![CDATA[<div class="sect1">
+</div>]]></description><link>https://vanilla-java.github.io/2016/03/23/Microservices-in-the-Chronicle-world-Part-1.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/03/23/Microservices-in-the-Chronicle-world-Part-1.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[examples]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Wed, 23 Mar 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[Micro-services for performance]]></title><description><![CDATA[<div class="sect1">
 <h2 id="_overview">Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -5848,7 +6026,7 @@ it takes almost no time at all to start up the test and debug it in your IDE.  Y
 <div class="footnote" id="_footnote_19">
 <a href="#_footnoteref_19">19</a>. Webopedia.com. (2016). What is Library? Webopedia Definition. Onilne. Available at: <a href="http://www.webopedia.com/TERM/L/library.html" class="bare">http://www.webopedia.com/TERM/L/library.html</a>. Accessed Jul. 2016
 </div>
-</div>]]></description><link>https://vanilla-java.github.io/2016/03/22/Micro-services-for-performance.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/03/22/Micro-services-for-performance.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[ design]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Tue, 22 Mar 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[A new start with Asciidoc and HubPress.IO]]></title><description><![CDATA[<div class="paragraph">
+</div>]]></description><link>https://vanilla-java.github.io/2016/03/22/Micro-services-for-performance.html</link><guid isPermaLink="true">https://vanilla-java.github.io/2016/03/22/Micro-services-for-performance.html</guid><category><![CDATA[Microservices]]></category><category><![CDATA[design]]></category><dc:creator><![CDATA[Peter Lawrey]]></dc:creator><pubDate>Tue, 22 Mar 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[A new start with Asciidoc and HubPress.IO]]></title><description><![CDATA[<div class="paragraph">
 <p>I started to migrate to using Asciidoc on Github last week, but the team at <a href="http://hubpress.io/" class="bare">http://hubpress.io/</a> suggested I use HubPress instead. This uses github for storage and hosting but provides a web site feel skin to both editing and more importantly display for readers.</p>
 </div>
 <div class="paragraph">
