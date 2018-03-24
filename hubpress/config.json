@@ -21,5 +21,21 @@
   },
   "theme": {
     "name": "ghostium"
+  },
+  "urls": {
+    "site": "https://vanilla-java.github.io",
+    "hubpress": "http://vanilla-java.github.io",
+    "theme": "//vanilla-java.github.io/themes/ghostium",
+    "images": "https://vanilla-java.github.io/images"
+  },
+  "initialisationConfigComponent": {
+    "name": "initialise-configuration",
+    "computed": {},
+    "methods": {},
+    "staticRenderFns": [
+      null,
+      null,
+      null
+    ]
   }
 }
